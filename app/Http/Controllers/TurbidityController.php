@@ -10,6 +10,7 @@ class TurbidityController extends Controller
     public function index()
     {
         $logs = TurbidityLog::orderBy('timestamp', 'desc')->get();
+        \Log::info('Get DATA', $logs->all());
         return response()->json($logs);
     }
 
@@ -19,12 +20,12 @@ class TurbidityController extends Controller
         \Log::info('Received data from ThingsBoard', $request->all());
         // Kiểm tra và nhận dữ liệu từ ThingsBoard
         $validated = $request->validate([
-            'ntu_value' => 'required|numeric',
+            'ntu' => 'required|numeric',
         ]);
 
         // Lưu dữ liệu vào database
         TurbidityLog::create([
-            'ntu_value' => $validated['ntu_value'],
+            'ntu_value' => $validated['ntu'],
             'timestamp' => now(),
         ]);
 
