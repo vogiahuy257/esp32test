@@ -1,7 +1,5 @@
-
-
 import { useEffect, useState } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 import {
   Card,
@@ -9,7 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   type ChartConfig,
   ChartContainer,
@@ -17,19 +15,19 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 interface TurbidityLog {
-  id: number
-  ntu_value: number
-  timestamp: string
+  id: number;
+  ntu_value: number;
+  timestamp: string;
 }
 
 const chartConfig = {
@@ -37,44 +35,44 @@ const chartConfig = {
     label: "Turbidity (NTU)",
     color: "hsl(var(--chart-1))",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export function TurbidityTable() {
-  const [timeRange, setTimeRange] = useState("90d")
-  const [showDetails, setShowDetails] = useState(false)
-  const [logs, setLogs] = useState<TurbidityLog[]>([])
-  const [loading, setLoading] = useState(false)
+  const [timeRange, setTimeRange] = useState("90d");
+  const [showDetails, setShowDetails] = useState(false);
+  const [logs, setLogs] = useState<TurbidityLog[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchLogs = async () => {
     try {
-      setLoading(true)
-      const res = await fetch("/api/turbidity")
-      const data = await res.json()
-      setLogs(data)
+      setLoading(true);
+      const res = await fetch("/api/turbidity");
+      const data = await res.json();
+      setLogs(data);
     } catch (err) {
-      console.error("Failed to fetch turbidity data:", err)
+      console.error("Failed to fetch turbidity data:", err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchLogs()
-  }, [])
+    fetchLogs();
+  }, []);
 
   const filteredData = logs.filter((item) => {
-    const date = new Date(item.timestamp)
-    const referenceDate = new Date()
-    let daysToSubtract = 90
+    const date = new Date(item.timestamp);
+    const referenceDate = new Date();
+    let daysToSubtract = 90;
     if (timeRange === "30d") {
-      daysToSubtract = 30
+      daysToSubtract = 30;
     } else if (timeRange === "7d") {
-      daysToSubtract = 7
+      daysToSubtract = 7;
     }
-    const startDate = new Date(referenceDate)
-    startDate.setDate(startDate.getDate() - daysToSubtract)
-    return date >= startDate
-  })
+    const startDate = new Date(referenceDate);
+    startDate.setDate(startDate.getDate() - daysToSubtract);
+    return date >= startDate;
+  });
 
   return (
     <Card>
@@ -119,11 +117,12 @@ export function TurbidityTable() {
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
-                const date = new Date(value)
+                const date = new Date(value);
                 return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
-                })
+                  timeZone: "UTC", // Múi giờ UTC
+                });
               }}
             />
             <ChartTooltip
@@ -131,10 +130,15 @@ export function TurbidityTable() {
               content={
                 <ChartTooltipContent
                   labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
+                    return new Date(value).toLocaleString("en-US", {
+                      year: "numeric",
                       month: "short",
                       day: "numeric",
-                    })
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      timeZone: "UTC", // Múi giờ UTC
+                    });
                   }}
                   indicator="dot"
                 />
@@ -177,10 +181,14 @@ export function TurbidityTable() {
                     <tr key={log.id} className="border-b">
                       <td className="px-4 py-2">{log.id}</td>
                       <td className="px-4 py-2">
-                        {new Date(log.timestamp).toLocaleDateString("en-US", {
+                        {new Date(log.timestamp).toLocaleString("en-US", {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          timeZone: "UTC", // Múi giờ UTC
                         })}
                       </td>
                       <td className="px-4 py-2">{log.ntu_value}</td>
@@ -193,5 +201,5 @@ export function TurbidityTable() {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
