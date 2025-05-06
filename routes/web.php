@@ -14,9 +14,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
-
-Route::post('/turbidity', [TurbidityController::class, 'store']); // API nhận dữ liệu từ ThingsBoard
-Route::get('/turbidity', [TurbidityController::class, 'index']); // Lấy tất cả log turbidity
-
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
