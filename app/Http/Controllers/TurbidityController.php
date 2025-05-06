@@ -9,16 +9,16 @@ class TurbidityController extends Controller
 {
     public function index()
     {
-        $logs = TurbidityLog::all();
-        return view('turbidity.index', compact('logs'));
+        $logs = TurbidityLog::orderBy('timestamp', 'desc')->get();
+        return response()->json($logs);
     }
+
 
     public function store(Request $request)
     {
         \Log::info('Received data from ThingsBoard', $request->all());
         // Kiểm tra và nhận dữ liệu từ ThingsBoard
         $validated = $request->validate([
-            'device_id' => 'required|string',
             'ntu_value' => 'required|numeric',
         ]);
 
