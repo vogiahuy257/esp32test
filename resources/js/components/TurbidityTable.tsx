@@ -12,7 +12,7 @@ export default function TurbidityTable() {
   const [logs, setLogs] = useState<TurbidityLog[]>([]);
 
   useEffect(() => {
-    fetch("/turbidity")
+    fetch("/api/turbidity")
       .then((res) => res.json())
       .then((data) => setLogs(data))
       .catch((err) => console.error("Failed to fetch turbidity data:", err));
